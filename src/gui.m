@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 28-Nov-2018 13:17:21
+% Last Modified by GUIDE v2.5 28-Nov-2018 14:05:25
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -81,6 +81,8 @@ function FileDropDown_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns FileDropDown contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from FileDropDown
+
+cla(handles.AxesMainCanvas);
 
 if isfield(handles, 'CurrentRGBImage')
     handles = rmfield(handles, 'CurrentRGBImage');
@@ -147,33 +149,68 @@ function figure1_SizeChangedFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in ShowFeature.
-function ShowFeature_Callback(hObject, eventdata, handles)
-% hObject    handle to ShowFeature (see GCBO)
+% --- Executes on button press in ShowRGBFeature.
+function ShowRGBFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to ShowRGBFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if isfield(handles,'OpenedFolder')
     if ~isfield(handles, 'CurrentRGBImage')
         fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
         handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
-        % Update handles structure
-        guidata(hObject, handles);
     end
     imshow(handles.CurrentRGBImage, 'Parent',handles.AxesMainCanvas);
 else
     f = msgbox('No folder loaded yet');
 end
 
+% Update handles structure
+guidata(hObject, handles);
 
-% --- Executes on button press in ConvertNDGFeature.
-function ConvertNDGFeature_Callback(hObject, eventdata, handles)
-% hObject    handle to ConvertNDGFeature (see GCBO)
+% --- Executes on button press in ShowNDGFeature.
+function ShowNDGFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to ShowNDGFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+if ~isfield(handles, 'CurrentNDGImage')
+    if isfield(handles,'OpenedFolder')
+        if ~isfield(handles, 'CurrentRGBImage')
+            fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
+            handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
+        end
+        handles.CurrentNDGImage = rgb2gray(handles.CurrentRGBImage);
+    else
+        f = msgbox('No folder loaded yet');
+    end
+end
 
-% --- Executes on button press in ConvertLABFeature.
-function ConvertLABFeature_Callback(hObject, eventdata, handles)
-% hObject    handle to ConvertLABFeature (see GCBO)
+% Update handles structure
+guidata(hObject, handles);
+
+imshow(handles.CurrentNDGImage, 'Parent',handles.AxesMainCanvas);
+
+
+
+% --- Executes on button press in ShowLABFeature.
+function ShowLABFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to ShowLABFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'CurrentLABImage')
+    if isfield(handles,'OpenedFolder')
+        if ~isfield(handles, 'CurrentLABImage')
+            fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
+            handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
+        end
+        handles.CurrentLABImage = rgb2lab(handles.CurrentRGBImage);
+    else
+        f = msgbox('No folder loaded yet');
+    end
+end
+
+% Update handles structure
+guidata(hObject, handles);
+
+imshow(handles.CurrentLABImage, 'Parent',handles.AxesMainCanvas);
