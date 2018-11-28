@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 28-Nov-2018 14:25:46
+% Last Modified by GUIDE v2.5 28-Nov-2018 17:04:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -264,3 +264,47 @@ end
 guidata(hObject, handles);
 
 imshow(handles.CurrentBinaryImage, 'Parent',handles.AxesMainCanvas);
+
+
+% --- Executes on button press in convertKmeansFeature.
+function convertKmeansFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to convertKmeansFeature (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if isfield(handles,'OpenedFolder')
+    if ~isfield(handles, 'CurrentRGBImage')
+        fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
+        handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
+    end
+    prompt = {'Enter the number of clusters'};
+    title = 'Value';
+    definput = {'3'};
+    opts.Interpreter = 'tex';
+    k = -1;
+    while(k < 1 || k > 8)
+        k = inputdlg(prompt,title,[1 40],definput,opts);
+        if isempty(k)
+            return 
+        end
+        k = str2num(k{1});
+        
+        if(k < 1 || k > 8)
+            msgbox('Value must be between 1 and 8');
+        end
+    end
+    map = computeColorMapKmeans(k);
+    [label_im, vec_mean] = kmeans_fast_Color(handles.CurrentRGBImage,k);
+    imshow(label_im, map, 'Parent',handles.AxesMainCanvas);
+else
+    f = msgbox('No folder loaded yet');
+    return
+end
+
+% Update handles structure
+guidata(hObject, handles);
+
+function colormap = computeColorMapKmeans(k)
+colormap = zeros(k,3);
+for i=1:k
+    colormap(3*(i-1) + 1 :3*(i-1)+3) = [0 0 i/k];
+end
