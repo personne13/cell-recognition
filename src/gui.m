@@ -247,7 +247,7 @@ if isfield(handles,'OpenedFolder')
         if isempty(thresholdValue)
             return 
         end
-        thresholdValue = str2num(thresholdValue{1});
+        thresholdValue = str2double(thresholdValue{1});
         
         if(thresholdValue < 0 || thresholdValue > 1)
             msgbox('Value must be between 0 and 1');
