@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 28-Nov-2018 14:05:25
+% Last Modified by GUIDE v2.5 28-Nov-2018 14:25:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -102,6 +102,12 @@ if isfield(handles, 'CurrentNDGImage')
     guidata(hObject, handles);
 end
 
+if isfield(handles, 'CurrentBinaryImage')
+    handles = rmfield(handles, 'CurrentBinaryImage');
+    % Update handles structure
+    guidata(hObject, handles);
+end
+
 % --- Executes during object creation, after setting all properties.
 function FileDropDown_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to FileDropDown (see GCBO)
@@ -162,6 +168,7 @@ if isfield(handles,'OpenedFolder')
     imshow(handles.CurrentRGBImage, 'Parent',handles.AxesMainCanvas);
 else
     f = msgbox('No folder loaded yet');
+    return
 end
 
 % Update handles structure
@@ -182,6 +189,7 @@ if ~isfield(handles, 'CurrentNDGImage')
         handles.CurrentNDGImage = rgb2gray(handles.CurrentRGBImage);
     else
         f = msgbox('No folder loaded yet');
+        return
     end
 end
 
@@ -207,6 +215,7 @@ if ~isfield(handles, 'CurrentLABImage')
         handles.CurrentLABImage = rgb2lab(handles.CurrentRGBImage);
     else
         f = msgbox('No folder loaded yet');
+        return
     end
 end
 
@@ -214,3 +223,44 @@ end
 guidata(hObject, handles);
 
 imshow(handles.CurrentLABImage, 'Parent',handles.AxesMainCanvas);
+
+
+% --- Executes on button press in ConvertBinaryFeature.
+function ConvertBinaryFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to ConvertBinaryFeature (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+if isfield(handles,'OpenedFolder')
+    if ~isfield(handles, 'CurrentRGBImage')
+        fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
+        handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
+    end
+    prompt = {'Enter a binary threshold'};
+    title = 'Value';
+    definput = {'0.5'};
+    opts.Interpreter = 'tex';
+    thresholdValue = -1;
+    while(thresholdValue < 0 || thresholdValue > 1)
+        thresholdValue = inputdlg(prompt,title,[1 40],definput,opts);
+        if isempty(thresholdValue)
+            return 
+        end
+        thresholdValue = str2num(thresholdValue{1});
+        
+        if(thresholdValue < 0 || thresholdValue > 1)
+            msgbox('Value must be between 0 and 1');
+        end
+    end
+
+    handles.CurrentBinaryImage = im2bw(handles.CurrentRGBImage, thresholdValue);
+else
+    f = msgbox('No folder loaded yet');
+    return
+end
+
+% Update handles structure
+guidata(hObject, handles);
+
+imshow(handles.CurrentBinaryImage, 'Parent',handles.AxesMainCanvas);
