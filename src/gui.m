@@ -134,6 +134,11 @@ function OpenFolderItem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dirpath = uigetdir('.');
+
+if dirpath == 0
+   return 
+end
+
 files = dir(fullfile(dirpath, '*.tif'));
 
 if isempty(files)
