@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 28-Nov-2018 17:04:44
+% Last Modified by GUIDE v2.5 05-Dec-2018 14:05:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -312,4 +312,63 @@ function colormap = computeColorMapKmeans(k)
 colormap = zeros(k,3);
 for i=1:k
     colormap(3*(i-1) + 1 :3*(i-1)+3) = [0 0 i/k];
+end
+
+
+% --- Executes on button press in LabelEditionFeature.
+function LabelEditionFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to LabelEditionFeature (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'CurrentLABImage')
+    if isfield(handles,'OpenedFolder')
+        if ~isfield(handles, 'CurrentLABImage')
+            fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
+            handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
+        end
+        handles.CurrentLABImage = rgb2lab(handles.CurrentRGBImage);
+    else
+        f = msgbox('No folder loaded yet');
+        return
+    end
+end
+
+handles.CellDataset = [];
+currentPoly = impoly(handles.AxesMainCanvas);
+
+% --- Executes on button press in PredictFeature.
+function PredictFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to PredictFeature (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton9.
+function pushbutton9_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on selection change in popupmenu3.
+function popupmenu3_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu3 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu3
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
