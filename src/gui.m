@@ -22,7 +22,7 @@ function varargout = gui(varargin)
 
 % Edit the above text to modify the response to help gui
 
-% Last Modified by GUIDE v2.5 05-Dec-2018 14:05:33
+% Last Modified by GUIDE v2.5 05-Dec-2018 17:18:16
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -104,6 +104,12 @@ end
 
 if isfield(handles, 'CurrentBinaryImage')
     handles = rmfield(handles, 'CurrentBinaryImage');
+    % Update handles structure
+    guidata(hObject, handles);
+end
+
+if isfield(handles, 'Labels')
+    handles = rmfield(handles, 'Labels');
     % Update handles structure
     guidata(hObject, handles);
 end
@@ -334,8 +340,32 @@ if ~isfield(handles, 'CurrentLABImage')
     end
 end
 
-handles.CellDataset = [];
 currentPoly = impoly(handles.AxesMainCanvas);
+
+switch (handles.ChangeLabelFeature.Value)
+    case 1
+        setColor(currentPoly, 'green');
+    case 2
+        setColor(currentPoly, 'black');
+    case 3
+        setColor(currentPoly, 'red');
+    case 4
+        setColor(currentPoly, 'yellow');
+end
+
+label.poly = currentPoly;
+label.type = handles.ChangeLabelFeature.Value;
+
+
+if ~isfield(handles, 'Labels')
+    handles.Labels = label;
+else
+    handles.Labels = [handles.Labels label];
+end
+
+% Update handles structure
+guidata(hObject, handles);
+
 
 % --- Executes on button press in PredictFeature.
 function PredictFeature_Callback(hObject, eventdata, handles)
@@ -351,19 +381,19 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on selection change in popupmenu3.
-function popupmenu3_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu3 (see GCBO)
+% --- Executes on selection change in ChangeLabelFeature.
+function ChangeLabelFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to ChangeLabelFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu3 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu3
+% Hints: contents = cellstr(get(hObject,'String')) returns ChangeLabelFeature contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from ChangeLabelFeature
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu3 (see GCBO)
+function ChangeLabelFeature_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ChangeLabelFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -372,3 +402,10 @@ function popupmenu3_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in SaveLabelFeature.
+function SaveLabelFeature_Callback(hObject, eventdata, handles)
+% hObject    handle to SaveLabelFeature (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
