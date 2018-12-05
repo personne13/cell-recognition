@@ -355,12 +355,12 @@ end
 
 label.poly = currentPoly;
 label.type = handles.ChangeLabelFeature.Value;
-
+label.image = handles.CurrentImage;
 
 if ~isfield(handles, 'Labels')
     handles.Labels = label;
 else
-    handles.Labels = [handles.Labels label];
+    handles.Labels = [handles.CurrentImage.Labels label];
 end
 
 % Update handles structure

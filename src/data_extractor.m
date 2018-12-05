@@ -1,3 +1,3 @@
-function features = data_extractor(image, labels)
-    features = [];
+function data = data_extractor(labels)
+    data = [];
 end
