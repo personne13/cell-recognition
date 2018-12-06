@@ -332,13 +332,8 @@ function LabelEditionFeature_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if isfield(handles,'OpenedFolder')
-    if ~isfield(handles, 'CurrentRGBImage')
-        fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
-        handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
-    end
-else
-    f = msgbox('No folder loaded yet');
+if ~isfield(handles, 'CurrentRGBImage')
+    msgbox('Open an rgb image before adding a label');
     return
 end
 
@@ -374,13 +369,57 @@ function PredictFeature_Callback(hObject, eventdata, handles)
 % hObject    handle to PredictFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if ~isfield(handles, 'TrainedModel')
+    msgbox('Train a model before predicting');
+    return
+end
 
+%Creating features ...
+c1 = handles.CurrentRGBImage(:,:,1);
+c2 = handles.CurrentRGBImage(:,:,2);
+c3 = handles.CurrentRGBImage(:,:,3);
+
+unknown_data = [];
+unknown_data = [unknown_data, c1(:)];
+unknown_data = [unknown_data, c2(:)];
+unknown_data = [unknown_data, c3(:)];
+unknown_data = double(unknown_data);
+
+nbPx = length(unknown_data);
+m = msgbox('Model predicting...');
+[predicted_label] = svmpredict(rand(nbPx,1), unknown_data, handles.TrainedModel);
+m.delete();
+
+label_im = reshape(predicted_label, size(c1));
+map = computeColorMapKmeans(4);
+imshow(label_im, map, 'Parent',handles.AxesMainCanvas);
 
 % --- Executes on button press in pushbutton9.
-function pushbutton9_Callback(hObject, eventdata, handles)
+function TrainFeature_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton9 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if ~isfield(handles, 'data')
+    msgbox('No existing data');
+    return
+end
+
+
+[m, np1] = size(handles.data);
+n = np1 - 1;
+training_label_vector = double(handles.data(1:m,1:1));
+training_instance_matrix = double(handles.data(1:m, 2:np1));
+
+m = msgbox('Model training...');
+
+handles.TrainedModel = svmtrain(training_label_vector, training_instance_matrix);
+
+msgbox('Model trained');
+m.delete();
+
+% Update handles structure
+guidata(hObject, handles);
+
 
 
 % --- Executes on selection change in ChangeLabelFeature.
@@ -422,11 +461,11 @@ new_data = data_extractor(handles.Labels);
 if ~isfield(handles, 'data')
     handles.data = new_data;
 else
-    handles.data = [handles.data new_data];
+    handles.data = [handles.data;new_data];
 end
 
 
-for i = size(handles.Labels)
+for i = 1:length( handles.Labels)
     handles.Labels(i).poly.delete();
 end
 

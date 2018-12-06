@@ -1,6 +1,6 @@
 function data = data_extractor(labels)
     data = [];
-    for i = size(labels)
+    for i = 1:length(labels)
     
         mask = createMask(labels(i).poly);
         c1 = labels(i).image(:,:,1);
