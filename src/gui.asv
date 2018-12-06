@@ -413,24 +413,12 @@ function SaveLabelFeature_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isfield(handles, 'Labels')
-    msgbox('No label on current image');
+    msgbox('No labels on current image');
     return
 end
 
-new_data = data_extractor(handles.Labels);
-
-if ~isfield(handles, 'data')
-    handles.data = new_data;
-else
-    handles.data = [handles.data new_data];
+handles.data = data_extractor(handles.Labels);
+for i = 1:size(handles.Labels)
+    handles.Labels(i).poly.delete
 end
-
-
-for i = size(handles.Labels)
-    handles.Labels(i).poly.delete();
-end
-
-handles = rmfield(handles, 'Labels');
-% Update handles structure
-guidata(hObject, handles);
 
