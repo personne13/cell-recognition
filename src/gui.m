@@ -177,6 +177,11 @@ if isfield(handles,'OpenedFolder')
         handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
     end
     imshow(handles.CurrentRGBImage, 'Parent',handles.AxesMainCanvas);
+    if isfield(handles, 'Labels')
+        handles = rmfield(handles, 'Labels');
+        % Update handles structure
+        guidata(hObject, handles);
+    end
 else
     f = msgbox('No folder loaded yet');
     return
