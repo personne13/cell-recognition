@@ -327,17 +327,14 @@ function LabelEditionFeature_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if ~isfield(handles, 'CurrentLABImage')
-    if isfield(handles,'OpenedFolder')
-        if ~isfield(handles, 'CurrentLABImage')
-            fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
-            handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
-        end
-        handles.CurrentLABImage = rgb2lab(handles.CurrentRGBImage);
-    else
-        f = msgbox('No folder loaded yet');
-        return
+if isfield(handles,'OpenedFolder')
+    if ~isfield(handles, 'CurrentRGBImage')
+        fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
+        handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
     end
+else
+    f = msgbox('No folder loaded yet');
+    return
 end
 
 currentPoly = impoly(handles.AxesMainCanvas);
@@ -355,12 +352,12 @@ end
 
 label.poly = currentPoly;
 label.type = handles.ChangeLabelFeature.Value;
-label.image = handles.CurrentImage;
+label.image = handles.CurrentRGBImage;
 
 if ~isfield(handles, 'Labels')
     handles.Labels = label;
 else
-    handles.Labels = [handles.CurrentImage.Labels label];
+    handles.Labels = [handles.Labels label];
 end
 
 % Update handles structure
