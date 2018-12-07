@@ -175,7 +175,7 @@ if isfield(handles,'OpenedFolder')
     if ~isfield(handles, 'CurrentRGBImage')
         fileName = handles.FileDropDown.String(handles.FileDropDown.Value);
         handles.CurrentRGBImage = imread(strcat(handles.OpenedFolder,'/', fileName{1}));
-        handles.CurrentRGBImage = imresize(handles.CurrentRGBImage, scale)
+        handles.CurrentRGBImage = imresize(handles.CurrentRGBImage, 0.25);
     end
     imshow(handles.CurrentRGBImage, 'Parent',handles.AxesMainCanvas);
     if isfield(handles, 'Labels')
@@ -389,7 +389,7 @@ unknown_data = double(unknown_data);
 nbPx = length(unknown_data);
 m = msgbox('Model predicting...');
 opt = '-c 100 -h 0';
-[predicted_label] = svmpredict(ones(nbPx,1), unknown_data, handles.TrainedModel, opt);
+[predicted_label] = svmpredict(ones(nbPx,1), unknown_data, handles.TrainedModel);
 m.delete();
 
 label_im = reshape(predicted_label, size(c1));
@@ -414,7 +414,7 @@ training_instance_matrix = double(handles.data(1:m, 2:np1));
 
 m = msgbox('Model training...');
 
-handles.TrainedModel = svmtrain(training_label_vector, training_instance_matrix);
+handles.TrainedModel = svmtrain(training_label_vector, training_instance_matrix, '-');
 
 msgbox('Model trained');
 m.delete();

@@ -370,6 +370,12 @@ function PredictFeature_Callback(hObject, eventdata, handles)
 % hObject    handle to PredictFeature (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles, 'CurrentRGBImage')
+    msgbox('No loaded image');
+    return
+end
+
 if ~isfield(handles, 'TrainedModel')
     msgbox('Train a model before predicting');
     return
@@ -388,7 +394,6 @@ unknown_data = double(unknown_data);
 
 nbPx = length(unknown_data);
 m = msgbox('Model predicting...');
-opt = '-c 100 -h 0';
 [predicted_label] = svmpredict(ones(nbPx,1), unknown_data, handles.TrainedModel);
 m.delete();
 
@@ -414,7 +419,7 @@ training_instance_matrix = double(handles.data(1:m, 2:np1));
 
 m = msgbox('Model training...');
 
-handles.TrainedModel = svmtrain(training_label_vector, training_instance_matrix);
+handles.TrainedModel = svmtrain(training_label_vector, training_instance_matrix, '-t 2 -c 100 -h 0');
 
 msgbox('Model trained');
 m.delete();
