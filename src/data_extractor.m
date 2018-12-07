@@ -1,6 +1,6 @@
 function data = data_extractor(labels)
     data = [];
-    size_neighbors = 5;
+    size_neighbors = 3;
     for i = 1:length(labels)
     
         mask = createMask(labels(i).poly);

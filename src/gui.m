@@ -391,7 +391,7 @@ mat_mean_c1 = zeros(m, n);
 mat_mean_c2 = zeros(m, n);
 mat_mean_c3 = zeros(m, n);
 
-size_neighbors = 5;
+size_neighbors = 3;
 
 for row = 1:m
     for col = 1:n
@@ -452,7 +452,7 @@ m = msgbox('Model predicting...');
 m.delete();
 
 label_im = reshape(predicted_label, size(c1));
-map = computeColorMapKmeans(4);
+map = computeColorMapKmeans(5);
 imshow(label_im, map, 'Parent',handles.AxesMainCanvas);
 
 % --- Executes on button press in pushbutton9.
