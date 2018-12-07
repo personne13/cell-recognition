@@ -386,10 +386,39 @@ c1 = handles.CurrentRGBImage(:,:,1);
 c2 = handles.CurrentRGBImage(:,:,2);
 c3 = handles.CurrentRGBImage(:,:,3);
 
+[m, n] = size(c1);
+mat_mean_c1 = zeros(m, n);
+mat_mean_c2 = zeros(m, n);
+mat_mean_c3 = zeros(m, n);
+
+size_neighbors = 5;
+
+for row = 1:m
+    for col = 1:n
+        i0 = max(row-size_neighbors, 1);
+        i1 = min(row+size_neighbors, m);
+        j0 = max(col-size_neighbors, 1);
+        j1 = min(col+size_neighbors, n);
+        sub_mat = c1(i0:i1,j0:j1);
+        mat_mean_c1(row,col) = sum(sum(sub_mat) / ((i1 - i0 + 1) * (j1 - j0 + 1)));
+
+        sub_mat = c2(i0:i1,j0:j1);
+        mat_mean_c2(row,col) = sum(sum(sub_mat) / ((i1 - i0 + 1) * (j1 - j0 + 1)));
+
+        sub_mat = c3(i0:i1,j0:j1);
+        mat_mean_c3(row,col) = sum(sum(sub_mat) / ((i1 - i0 + 1) * (j1 - j0 + 1)));
+    end
+end
+
 unknown_data = [];
 unknown_data = [unknown_data, c1(:)];
 unknown_data = [unknown_data, c2(:)];
 unknown_data = [unknown_data, c3(:)];
+
+unknown_data = [unknown_data, mat_mean_c1(:)];
+unknown_data = [unknown_data, mat_mean_c2(:)];
+unknown_data = [unknown_data, mat_mean_c3(:)];
+
 unknown_data = double(unknown_data);
 
 nbPx = length(unknown_data);
