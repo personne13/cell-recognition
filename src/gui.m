@@ -339,6 +339,7 @@ if ~isfield(handles, 'CurrentRGBImage')
 end
 
 currentPoly = impoly(handles.AxesMainCanvas);
+currentPoly.Deletable = false;
 
 switch (handles.ChangeLabelFeature.Value)
     case 1
